@@ -1,0 +1,13 @@
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include "../ifcgeom/ConversionSettings.h"
+#include "../ifcparse/IfcFile.h"
+#include "../ifcparse/IfcParse.h"
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class IFCBuildingModel;
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+namespace ExodusIFCGeomUtils
+{
+    int TestExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geometry::Settings& settings);
+    int ExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geometry::Settings& settings, IFCBuildingModel &MyBuilding);
+    bool EXODUSIFCExtract(IfcParse::IfcFile &file, IFCBuildingModel &MyBuilding);
+}
