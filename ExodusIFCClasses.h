@@ -196,13 +196,13 @@ public:
 class IFCLandingModel : public IFCRepresentation
 {
 private:
-    double m_TopLevel = -1.0f;
+    double m_TopMeshLevel = -1.0f;
 public:
     IFCLandingModel() : IFCRepresentation() { }
     IFCLandingModel(std::string aGUID) : IFCRepresentation(aGUID) { }
 
-    double GetTopLevel() const { return(m_TopLevel); }
-    void SetTopLevel(double aHeight) { m_TopLevel = aHeight; }
+    double GetMeshTopLevel() const { return(m_TopMeshLevel); }
+    void SetTopMeshLevel(double aHeight) { m_TopMeshLevel = aHeight; }
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IFCRampFlightModel : public IFCRepresentation
@@ -364,16 +364,16 @@ public:
 class IFCStairFlightModel : public IFCStairModelData, public IFCRepresentation
 {
 private:
-    double m_TopLevel = -1.0f;
-    double m_LowLevel = -1.0f;
+    double m_TopMeshLevel = -1.0f;
+    double m_LowMeshLevel = -1.0f;
 public:
     IFCStairFlightModel() : IFCRepresentation() { }
     IFCStairFlightModel(std::string aGUID) : IFCRepresentation(aGUID) { }
 
-    double GetTopLevel() const { return(m_TopLevel); }
-    void SetTopLevel(double aHeight) { m_TopLevel = aHeight; }
-    double GetLowLevel() const { return(m_LowLevel); }
-    void SetLowLevel(double aHeight) { m_LowLevel = aHeight; }
+    double GetTopMeshLevel() const { return(m_TopMeshLevel); }
+    void SetTopMeshLevel(double aHeight) { m_TopMeshLevel = aHeight; }
+    double GetLowMeshLevel() const { return(m_LowMeshLevel); }
+    void SetLowMeshLevel(double aHeight) { m_LowMeshLevel = aHeight; }
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IFCStairModel : public IFCStairModelData, public IFCRepresentation

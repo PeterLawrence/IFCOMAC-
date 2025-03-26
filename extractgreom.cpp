@@ -163,9 +163,9 @@ int ExodusIFCGeomUtils::ExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geome
                     //    float Elev = aStory->GetElevationOfFFLRelative();   
                     //}
                     double TopElev = aStairFlight->GetUpperHeight(); // this is the top of the stairvase level
-                    aStairFlight->SetTopLevel(TopElev);
+                    aStairFlight->SetTopMeshLevel(TopElev);
                     double LowElev = aStairFlight->GetLowerHeight(); // this is the top of the stairvase level
-                    aStairFlight->SetLowLevel(LowElev);
+                    aStairFlight->SetLowMeshLevel(LowElev);
                     aStairFlight->GenerateBoundary(LowElev, 0.1); // TO DO: boundary should be based on bounding box! to do
                 }
             }
@@ -181,7 +181,7 @@ int ExodusIFCGeomUtils::ExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geome
                     //    float Elev = aStory->GetElevationOfFFLRelative();
                     //}
                     double TopElev = aLanding->GetUpperHeight(); // this is the top of the landing level
-                    aLanding->SetTopLevel(TopElev);
+                    aLanding->SetTopMeshLevel(TopElev);
                     aLanding->GenerateBoundary(double(TopElev), 0.1);
                 }
             }
