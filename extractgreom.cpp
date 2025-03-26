@@ -157,12 +157,16 @@ int ExodusIFCGeomUtils::ExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geome
                 if (aStairFlight)
                 {
                     aStairFlight->SetTriangulation(mesh.verts(), mesh.faces());
-                    std::shared_ptr<IFCStoreyModel> aStory = MyBuilding.GetStorey(aStairFlight);
-                    if (aStory)
-                    {
-                        float Elev = aStory->GetElevationOfFFLRelative();
-                        aStairFlight->GenerateBoundary(double(Elev), 0.1);
-                    }
+                    //std::shared_ptr<IFCStoreyModel> aStory = MyBuilding.GetStoreyStairPart(aStairFlight);
+                    //if (aStory)
+                    //{
+                    //    float Elev = aStory->GetElevationOfFFLRelative();   
+                    //}
+                    double TopElev = aStairFlight->GetUpperHeight(); // this is the top of the stairvase level
+                    aStairFlight->SetTopLevel(TopElev);
+                    double LowElev = aStairFlight->GetLowerHeight(); // this is the top of the stairvase level
+                    aStairFlight->SetLowLevel(LowElev);
+                    aStairFlight->GenerateBoundary(LowElev, 0.1); // TO DO: boundary should be based on bounding box! to do
                 }
             }
             else if (geom_object->type().compare("IfcSlab") == 0)
@@ -171,12 +175,14 @@ int ExodusIFCGeomUtils::ExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geome
                 if (aLanding) // either a stair or ramp landing
                 {
                     aLanding->SetTriangulation(mesh.verts(), mesh.faces());
-                    std::shared_ptr<IFCStoreyModel> aStory = MyBuilding.GetStorey(aLanding);
-                    if (aStory)
-                    {
-                        float Elev = aStory->GetElevationOfFFLRelative();
-                        aLanding->GenerateBoundary(double(Elev), 0.1);
-                    }
+                    //std::shared_ptr<IFCStoreyModel> aStory = MyBuilding.GetStoreyStairPart(aLanding);
+                    //if (aStory)
+                    //{
+                    //    float Elev = aStory->GetElevationOfFFLRelative();
+                    //}
+                    double TopElev = aLanding->GetUpperHeight(); // this is the top of the landing level
+                    aLanding->SetTopLevel(TopElev);
+                    aLanding->GenerateBoundary(double(TopElev), 0.1);
                 }
             }
             else if (geom_object->type().compare("IfcWall") == 0)
@@ -312,7 +318,7 @@ int ExodusIFCGeomUtils::ExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geome
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 namespace ExodusIFCGeomUtils
 {
-    float g_multi = 0.001f; // factor to convert to metres
+    float g_multi = 1.0f; // factor to convert to metres
     float toMetres(float aValue)
     {
         return (aValue*g_multi);

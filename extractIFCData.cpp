@@ -57,6 +57,18 @@ bool IFCBuildingModel::GeometryRequired(std::string &guid) const
     return false;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::shared_ptr<IFCStoreyModel> IFCBuildingModel::GetStoreyStairPart(std::shared_ptr<IFCRepresentation> anObject) const
+{
+    for (auto aStory : m_BuildingStories)
+    {
+        if (aStory->HasStairPart(anObject))
+        {
+            return aStory;
+        }
+    }
+    return (nullptr);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::shared_ptr<IFCStoreyModel> IFCBuildingModel::GetStorey(std::shared_ptr<IFCRepresentation> anObject) const
 {
     for (auto aStory : m_BuildingStories)
@@ -273,6 +285,99 @@ double IFCTriangulation::GetUpperHeight() const
 double IFCTriangulation::GetHeight() const
 {
     return (GetUpperHeight() - GetLowerHeight());
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+struct ObjLevelData
+{
+    double m_LevelHeight = -1;
+    std::vector<int> m_lFace;
+    size_t NumberOfFaces() const { return(m_lFace.size() / 3); }
+    ObjLevelData(double aHeight) : m_LevelHeight(aHeight) { }
+    void AddFace(int v0, int v1, int v2)
+    {
+        m_lFace.push_back(v0);
+        m_lFace.push_back(v1);
+        m_lFace.push_back(v2);
+    }
+
+    IFCPoint GetCentre(const std::vector<double> &theVerts) const
+    {
+        size_t iFace;
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        if (m_lFace.size() > 0)
+        {
+            for (iFace = 0; iFace < m_lFace.size(); ++iFace)
+            {
+                int v0 = m_lFace.at(iFace);     // not don't need to multiplty by 3 as before
+                //int v1 = m_lFace.at(iFace + 1); // since that was performed when these points 
+                //int v2 = m_lFace.at(iFace + 2); // were added to this class
+                x += theVerts.at(v0 + IFCTriangulation::xp);
+                y += theVerts.at(v0 + IFCTriangulation::yp);
+                z += theVerts.at(v0 + IFCTriangulation::zp);
+            }
+            x = x / double(m_lFace.size());
+            y = y / double(m_lFace.size());
+            z = z / double(m_lFace.size());
+        }
+        return IFCPoint(x, y, z);
+    }
+};
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool IFCTriangulation::GetFaces(std::vector<IFCPoint> &aFaces) const
+{
+    if (m_Faces.size() > 0)
+    {
+        double theTol = 0.01;
+
+        std::vector<ObjLevelData> m_Levels;
+        size_t iFace = 0;
+        for (iFace = 0; iFace < m_Faces.size(); iFace += 3)
+        {
+            int v0 = m_Faces.at(iFace) * 3;
+            int v1 = m_Faces.at(iFace + 1) * 3;
+            int v2 = m_Faces.at(iFace + 2) * 3;
+            if (abs(m_Verts.at(v0 + zp) - m_Verts.at(v1 + zp)) < theTol &&
+                abs(m_Verts.at(v0 + zp) - m_Verts.at(v2 + zp)) < theTol &&
+                abs(m_Verts.at(v1 + zp) - m_Verts.at(v2 + zp)) < theTol)
+            {
+                double faceHeight = m_Verts.at(v0 + zp);
+                bool AddpendLevel = true;
+                if (m_Levels.size() > 0)
+                {
+                    for (auto &aLevel : m_Levels)
+                    {
+                        if (abs(aLevel.m_LevelHeight - faceHeight) < theTol)
+                        {
+                            aLevel.AddFace(v0, v1, v2);
+                            AddpendLevel = false;
+                            break;
+                        }
+                    }
+                }
+                if (AddpendLevel)
+                {
+                    // add_step_level
+                    m_Levels.emplace_back(ObjLevelData(faceHeight));
+                    m_Levels.back().AddFace(v0, v1, v2);
+                }
+            }
+        }
+        std::sort(std::begin(m_Levels), std::end(m_Levels), [](ObjLevelData &a, ObjLevelData & b) {return a.m_LevelHeight > b.m_LevelHeight; });
+
+        for (auto &aLevel : m_Levels)
+        {
+            for (int v0 : aLevel.m_lFace)
+            {
+                double x = m_Verts.at(v0 + IFCTriangulation::xp);
+                double y = m_Verts.at(v0 + IFCTriangulation::yp);
+                double z = m_Verts.at(v0 + IFCTriangulation::zp);
+                aFaces.push_back(IFCPoint(x, y, z));
+            }
+        }
+    }
+    return (aFaces.size() > 0);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool  IFCTriangulation::GetPathData(std::vector<IFCPoint> &aPath, double &aWidth) const

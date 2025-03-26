@@ -82,12 +82,12 @@ public:
 private:
     std::vector<double> m_Verts; // flat data structure of vertices (x0,y0,z0,x1,y1,z1,...)
     std::vector<int> m_Faces;    // flat data structure of facre (f0_v1,f0_v2,f0_v3,f1_v1,f1_v2,f1_v3,...)
-
+public:
     // relative locations of x,y,z in m_Verts
     static const int xp = 0;
     static const int yp = 1;
     static const int zp = 2;
-public:
+
     IFCTriangulation() { }
     IFCTriangulation(std::vector<double> &theVerts, std::vector<int> &theFaces) : m_Verts(theVerts), m_Faces(theFaces) { }
     void SetTriangulation(std::vector<double> &theVerts, std::vector<int> &theFaces)
@@ -105,6 +105,7 @@ public:
     double GetUpperHeight() const;
     double GetHeight() const;
     bool GetPathData(std::vector<IFCPoint> &aPath, double &aWidth) const;
+    bool GetFaces(std::vector<IFCPoint> &aFaces) const;
 
     double GetFloorArea(double Elev, double aTol);
     bool GenerateEdges(face_list &Faces, edge_list &Boundary) const;
@@ -183,6 +184,7 @@ public:
 
     double GetHeight() const { return m_Triangulation.GetHeight(); }
     bool GetPathData(std::vector<IFCPoint> &aPath, double &aWidth) const { return m_Triangulation.GetPathData(aPath, aWidth); }
+    bool GetFaces(std::vector<IFCPoint> &aFaces) const { return m_Triangulation.GetFaces(aFaces); }
 
     IFCTriangulation::point_list& GetBoundaryLines() { return m_BoundaryLines; }
 
@@ -193,9 +195,14 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IFCLandingModel : public IFCRepresentation
 {
+private:
+    double m_TopLevel = -1.0f;
 public:
     IFCLandingModel() : IFCRepresentation() { }
     IFCLandingModel(std::string aGUID) : IFCRepresentation(aGUID) { }
+
+    double GetTopLevel() const { return(m_TopLevel); }
+    void SetTopLevel(double aHeight) { m_TopLevel = aHeight; }
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IFCRampFlightModel : public IFCRepresentation
@@ -356,9 +363,17 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IFCStairFlightModel : public IFCStairModelData, public IFCRepresentation
 {
+private:
+    double m_TopLevel = -1.0f;
+    double m_LowLevel = -1.0f;
 public:
     IFCStairFlightModel() : IFCRepresentation() { }
     IFCStairFlightModel(std::string aGUID) : IFCRepresentation(aGUID) { }
+
+    double GetTopLevel() const { return(m_TopLevel); }
+    void SetTopLevel(double aHeight) { m_TopLevel = aHeight; }
+    double GetLowLevel() const { return(m_LowLevel); }
+    void SetLowLevel(double aHeight) { m_LowLevel = aHeight; }
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IFCStairModel : public IFCStairModelData, public IFCRepresentation
@@ -390,6 +405,17 @@ public:
         }
         return nullptr;
     }
+    std::shared_ptr<IFCStairFlightModel> HasStairFlight(std::shared_ptr<IFCStairFlightModel>aStairPartObject) const
+    {
+        auto is_the_one_stairflight = [aStairPartObject](std::shared_ptr<IFCStairFlightModel> aFlight) { return aFlight = aStairPartObject; };
+
+        auto it = std::find_if(m_StairFlights.begin(), m_StairFlights.end(), is_the_one_stairflight);
+        if (it != m_StairFlights.end())
+        {
+            return *it;
+        }
+        return nullptr;
+    }
 
     size_t NumberOfLandings() const { return m_Landings.size(); }
     void AddLanding(std::shared_ptr<IFCLandingModel> aLanding)
@@ -411,6 +437,17 @@ public:
         }
         return nullptr;
     }
+    std::shared_ptr<IFCLandingModel> HasLanding(std::shared_ptr<IFCLandingModel> aStairPartObject) const
+    {
+        auto is_the_one_landing = [aStairPartObject](std::shared_ptr<IFCLandingModel> aFlight) { return aStairPartObject==aFlight; };
+
+        auto it = std::find_if(m_Landings.begin(), m_Landings.end(), is_the_one_landing);
+        if (it != m_Landings.end())
+        {
+            return *it;
+        }
+        return nullptr;
+    }
 
     bool HasStairPart(const std::string &aGUID) const
     {
@@ -419,6 +456,19 @@ public:
             return true;
         }
         if (GetLanding(aGUID))
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    bool HasStairPart(std::shared_ptr<IFCRepresentation>anStairPartObject) const
+    {
+        if (GetStairFlight(anStairPartObject->GetGUID()))
+        {
+            return true;
+        }
+        if (GetLanding(anStairPartObject->GetGUID()))
         {
             return true;
         }
@@ -662,6 +712,17 @@ public:
         for (auto aStair : m_Stairs)
         {
             if (aStair->HasStairPart(aGUID))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    bool HasStairPart(std::shared_ptr<IFCRepresentation>anStairPartObject) const
+    {
+        for (auto aStair : m_Stairs)
+        {
+            if (aStair->HasStairPart(anStairPartObject))
             {
                 return true;
             }
@@ -979,6 +1040,7 @@ public:
 
     bool GeometryRequired(std::string &guid) const;
     std::shared_ptr<IFCStoreyModel> GetStorey(std::shared_ptr<IFCRepresentation> anObject) const;
+    std::shared_ptr<IFCStoreyModel> GetStoreyStairPart(std::shared_ptr<IFCRepresentation> anObject) const;
 
 	size_t NumberOfStories() const { return(m_BuildingStories.size()); }
     void AddStorey(std::shared_ptr<IFCStoreyModel> aStorey)
