@@ -14,19 +14,18 @@
 #include <vld.h>
 #endif
 
-
-#include "../src/ifcgeom/ConversionSettings.h"
-#include "../src/ifcgeom/Converter.h"
-#include "../src/ifcparse/IfcFile.h"
-#include "../src/ifcparse/IfcSchema.h"
+#include "ifcgeom/ConversionSettings.h"
+#include "ifcgeom/Converter.h"
+#include "ifcparse/IfcFile.h"
+#include "ifcparse/IfcSchema.h"
 
 #include <map>
 #include <string>
 #include <variant>
-#include "../src/examples/ExodusIFCClasses.h"
-#include "../src/examples/extractgeom.h"
+#include "ExodusIFCClasses.h"
+#include "extractgeom.h"
 
-#include "pch.h"
+#include "framework.h"
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved

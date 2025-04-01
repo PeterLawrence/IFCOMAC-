@@ -10,10 +10,10 @@
     #error please define ExoIFCSchema
 #elif (ExoIFCSchema==EXOIfc4x3_add1)
     #define IFCSchema  Ifc4x3_add1
-    #include "../ifcparse/Ifc4x3_add1.h"
+    #include "ifcparse/Ifc4x3_add1.h"
 #elif (ExoIFCSchema==EXOIfc4x3)
     #define IFCSchema  Ifc4x3
-	#include "../ifcparse/Ifc4x3.h"
+	#include "ifcparse/Ifc4x3.h"
 #else
    #error please ExoIFCSchema unkown
 #endif
