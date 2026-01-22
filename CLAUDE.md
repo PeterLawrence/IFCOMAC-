@@ -71,6 +71,16 @@ No lint configuration is included in this repository. Use a tool of your choice 
 
 ## Using the DLL in Other Projects
 
+### Dependencies
+
+- The project relies on IfcOpenShell and its dependencies.
+- Additional include and library directories are listed in `VisualStudioAdditionalDependencies.txt`.
+- The build process pulls the required `.lib` files automatically via the project settings.
+
+## Using the DLL in Other Projects
+
+
+
 1. **C/C++**: Use `LoadLibrary` and `GetProcAddress` to obtain the `FullIfcImporter` function as shown above.
 2. **Python**: Load the DLL with `ctypes` or `cffi`. Example with `ctypes`:
 
