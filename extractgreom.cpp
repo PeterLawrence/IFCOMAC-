@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Disable warnings coming from IfcOpenShell
 #pragma warning(disable : 4018 4267 4250 4984 4985 4307 4702)
-#include "../ifcgeom/IfcGeomRepresentation.h"
-#include "../ifcgeom/GeometrySerializer.h"
-#include "../ifcgeom/Iterator.h"
-#include "../ifcgeom/AbstractKernel.h"
+#include "ifcgeom/IfcGeomRepresentation.h"
+#include "ifcgeom/GeometrySerializer.h"
+#include "ifcgeom/Iterator.h"
+#include "ifcgeom/AbstractKernel.h"
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "extractgeom.h"
 #include "ExodusIFCClasses.h"

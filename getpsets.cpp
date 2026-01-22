@@ -4,10 +4,14 @@
 #include <iomanip>
 
 #pragma warning(disable : 4018 4267 4250 4984 4985 4307)
-#include "../ifcparse/IfcFile.h"
-#include "../ifcparse/Ifc4x3.h"
-#include "getpset.h"
+#include "ifcparse/IfcFile.h"
+#include "ifcparse/Ifc4x3.h"
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include "ExodusIFCClasses.h"
+#include "extractgeom.h"
+#include "exodusifcutils.h"
+#include "getpset.h"
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 std::string format_string(const AttributeValue& argument) {
