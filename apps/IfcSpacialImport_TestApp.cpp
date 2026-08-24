@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
         ifc_filepath = argv[1];
     } else {
         // Default to hotel-v12.ifc in TestFiles directory
-        ifc_filepath = "..\\..\\TestFiles\\hotel-v12.ifc";
+        ifc_filepath = "..\\..\\..\\..\\TestFiles\\hotel-v12.ifc";
     }
 
     std::cout << "[1/5] Input Configuration" << std::endl;

@@ -33,7 +33,7 @@ This application links against the main IfcSpacialImport library and includes it
 IfcSpacialImport_HotelExtractor.exe [path_to_ifc_file]
 ```
 
-Default file: `..\..\TestFiles\hotel-v12.ifc`
+Default file: `..\..\..\TestFiles\hotel-v12.ifc`
 
 ## Building
 

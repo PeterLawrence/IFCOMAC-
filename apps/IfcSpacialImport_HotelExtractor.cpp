@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
     // Configuration - try multiple paths
     std::string ifc_candidates[] = {
         "hotel-v12.ifc",                          // Current directory
-        "../../TestFiles/hotel-v12.ifc",          // From build/bin/apps/Release/
+        "../../../../TestFiles/hotel-v12.ifc",          // From build/bin/apps/Release/
         "../TestFiles/hotel-v12.ifc",             // From build/bin/
         "TestFiles/hotel-v12.ifc",                // From root
         "../TestFiles/hotel-v12.ifc"              // Fallback
