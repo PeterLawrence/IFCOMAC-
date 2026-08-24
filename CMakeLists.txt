@@ -408,3 +408,13 @@ if(BUILD_TESTS)
     
     message(STATUS "Tests enabled. Build with: cmake --build . --config Release --target IfcSpacialImportTests")
 endif()
+
+# ============================================================================
+# TEST APPLICATIONS (Integration & Demonstration)
+# ============================================================================
+
+option(BUILD_APPS "Build test applications" ON)
+
+if(BUILD_APPS)
+    add_subdirectory(apps)
+endif()
