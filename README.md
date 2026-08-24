@@ -29,6 +29,54 @@ This project builds the IfcSpacialImport DLL which uses IfcOpenShell and related
 - Release DLL: `build\bin\Release\IfcSpacialImport.dll`
 - Debug DLL:    `build\bin\Debug\IfcSpacialImport.dll`
 
+### Building Test Applications
+
+The project includes test applications that demonstrate loading and using the IfcSpacialImport DLL:
+
+#### IfcSpacialImport_HotelExtractor
+
+This application loads the DLL and extracts building information from `hotel-v12.ifc`:
+
+**Quick Build (Release):**
+```powershell
+cmake --build build --config Release --target IfcSpacialImport_HotelExtractor
+```
+
+**Quick Build (Debug):**
+```powershell
+cmake --build build --config Debug --target IfcSpacialImport_HotelExtractor
+```
+
+**Output:**
+- Release: `build\bin\apps\Release\IfcSpacialImport_HotelExtractor.exe`
+- Debug: `build\bin\apps\Debug\IfcSpacialImport_HotelExtractor.exe`
+
+**Run the test app:**
+```powershell
+.\build\bin\apps\Release\IfcSpacialImport_HotelExtractor.exe
+```
+
+**Alternative Build Methods:**
+
+Using MSBuild directly:
+```powershell
+cd build
+msbuild IfcSpacialImport_HotelExtractor.vcxproj /p:Configuration=Release /p:Platform=x64
+cd ..
+```
+
+Using the build script (PowerShell):
+```powershell
+.\build.ps1 -Configuration Release
+```
+
+Using the build script (Command Prompt):
+```cmd
+build.bat Release
+```
+
+See `apps/README.md` for detailed usage examples and integration patterns.
+
 ### Building Unit Tests
 
 To build and run the unit tests suite (requires Google Test):
@@ -44,6 +92,21 @@ cd build && ctest -C Release --output-on-failure
 ```
 
 See `tests/README.md` for detailed testing documentation.
+
+### Building All Targets (DLL, Tests, and Apps)
+
+To build everything in one command:
+
+```powershell
+cmake -S . -B build -G "Visual Studio 15 2017" -A x64 -DBUILD_TESTS=ON
+cmake --build build --config Release
+```
+
+Output will include:
+- `build\bin\Release\IfcSpacialImport.dll`
+- `build\bin\Release\IfcSpacialImportTests.exe`
+- `build\bin\apps\Release\IfcSpacialImport_HotelExtractor.exe`
+- `build\bin\apps\Release\IfcSpacialImport_TestApp.exe`
 
 ## Notes & Troubleshooting
 
