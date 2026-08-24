@@ -62,10 +62,26 @@ int main(int argc, char* argv[])
 {
     PrintHeader("IfcSpacialImport - Hotel IFC Extractor");
 
-    // Configuration
-    std::string ifc_filepath = "..\\..\\TestFiles\\hotel-v12.ifc";
+    // Configuration - try multiple paths
+    std::string ifc_candidates[] = {
+        "hotel-v12.ifc",                          // Current directory
+        "../../TestFiles/hotel-v12.ifc",          // From build/bin/apps/Release/
+        "../TestFiles/hotel-v12.ifc",             // From build/bin/
+        "TestFiles/hotel-v12.ifc",                // From root
+        "../TestFiles/hotel-v12.ifc"              // Fallback
+    };
+
+    std::string ifc_filepath;
     if (argc > 1) {
         ifc_filepath = argv[1];
+    } else {
+        // Find first existing path
+        for (const auto& candidate : ifc_candidates) {
+            if (std::filesystem::exists(candidate)) {
+                ifc_filepath = candidate;
+                break;
+            }
+        }
     }
 
     std::cout << "Configuration:\n";
