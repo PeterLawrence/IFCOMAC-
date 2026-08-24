@@ -1,0 +1,41 @@
+# Build directories
+/build/
+/bin/
+/lib/
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CMakeLists.txt.user
+
+# Visual Studio
+*.vcxproj.user
+*.suo
+*.user
+*.opensdf
+*.VC.db
+*.VC.opendb
+
+# Object and intermediate files
+*.obj
+*.o
+*.ipch
+*.pch
+
+# Generated project files
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Debug symbols
+*.pdb
+
+# Temporary and backup
+*~
+*.log
+
+# cmake build folders
+_build-*
+
+# Do not ignore source files like CMakeLists.txt or cmake/ toolchain

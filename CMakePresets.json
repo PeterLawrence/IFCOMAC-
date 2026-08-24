@@ -1,0 +1,42 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 20 },
+  "configurePresets": [
+    {
+      "name": "vs2017-x64-Release",
+      "displayName": "Visual Studio 2017 x64 Release",
+      "description": "Configure project for Visual Studio 2017 x64 (Release)",
+      "generator": "Visual Studio 15 2017",
+      "architecture": "x64",
+      "cacheVariables": {
+        "IFCOPENSHELL_ROOT": "E:/GitProjects/BIM-IFC/IfcOpenshell",
+        "IFCSPACIALIMPORT_ARCH": "x64",
+        "IFCSPACIALIMPORT_TOOLSET": "vs2017"
+      }
+    },
+    {
+      "name": "vs2017-x64-Debug",
+      "displayName": "Visual Studio 2017 x64 Debug",
+      "description": "Configure project for Visual Studio 2017 x64 (Debug)",
+      "generator": "Visual Studio 15 2017",
+      "architecture": "x64",
+      "cacheVariables": {
+        "IFCOPENSHELL_ROOT": "E:/GitProjects/BIM-IFC/IfcOpenshell",
+        "IFCSPACIALIMPORT_ARCH": "x64",
+        "IFCSPACIALIMPORT_TOOLSET": "vs2017"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-vs2017-x64-Release",
+      "configurePreset": "vs2017-x64-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "build-vs2017-x64-Debug",
+      "configurePreset": "vs2017-x64-Debug",
+      "configuration": "Debug"
+    }
+  ]
+}
