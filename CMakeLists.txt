@@ -360,3 +360,51 @@ message(STATUS "  Build Path: ${IFCOPENSHELL_BUILD}")
 message(STATUS "  Architecture: ${IFCSPACIALIMPORT_ARCH}")
 message(STATUS "  Toolset: ${IFCSPACIALIMPORT_TOOLSET}")
 message(STATUS "  Output: ${CMAKE_BINARY_DIR}/bin/$<CONFIG>/IfcSpacialImport.dll")
+
+# ============================================================================
+# TESTING CONFIGURATION (Optional)
+# ============================================================================
+
+# Enable testing with option to build tests
+option(BUILD_TESTS "Build unit tests" OFF)
+
+if(BUILD_TESTS)
+    enable_testing()
+    
+    # Fetch Google Test (optional: can also provide external path)
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/v1.13.0.zip
+    )
+    
+    # For Windows: prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+    
+    # Add test executable
+    add_executable(IfcSpacialImportTests
+        tests/test_exodus_ifc_utils.cpp
+    )
+    
+    # Link test executable with main library and Google Test
+    target_link_libraries(IfcSpacialImportTests PRIVATE
+        IfcSpacialImport
+        gtest
+        gtest_main
+    )
+    
+    # Include directories for test
+    target_include_directories(IfcSpacialImportTests PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${IFCOPENSHELL_SRC}"
+    )
+    
+    # Add test to CTest
+    add_test(
+        NAME IfcSpacialImportTests
+        COMMAND IfcSpacialImportTests
+    )
+    
+    message(STATUS "Tests enabled. Build with: cmake --build . --config Release --target IfcSpacialImportTests")
+endif()
