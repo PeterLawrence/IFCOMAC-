@@ -45,7 +45,7 @@ TEST_F(ExodusIFCUtilsTest, ExtractFromValidIFCFile) {
         
         // Verify extraction succeeded
         EXPECT_TRUE(result) << "EXODUSIFCExtract should return true for valid file";
-        EXPECT_GT(test_building->GetStoreys().size(), 0) << "Should have extracted at least one storey";
+        EXPECT_GT(test_building->NumberOfStories(), 0) << "Should have extracted at least one storey";
     }
     catch (const std::exception& e) {
         GTEST_SKIP() << "Exception during extraction: " << e.what();
@@ -55,24 +55,15 @@ TEST_F(ExodusIFCUtilsTest, ExtractFromValidIFCFile) {
 // Test: EXODUSIFCExtract with invalid/nonexistent file
 TEST_F(ExodusIFCUtilsTest, ExtractFromInvalidFile) {
     const char* invalid_path = "nonexistent_file_12345.ifc";
-    
-    try {
-        IfcParse::IfcFile file(invalid_path);
-        
-        bool result = ExodusIFCGeomUtils::EXODUSIFCExtract(file, *test_building);
-        
-        // Should either return false or throw exception for invalid file
-        EXPECT_FALSE(result) << "Should not extract from nonexistent file";
-    }
-    catch (const std::exception&) {
-        // Expected behavior: exception thrown
-        SUCCEED() << "Correctly threw exception for invalid file";
-    }
+
+    EXPECT_THROW(
+        ExodusIFCGeomUtils::EXODUSIFCExtract(invalid_path, *test_building),
+        std::invalid_argument);
 }
 
 // Test: Building model is initialized correctly
 TEST_F(ExodusIFCUtilsTest, BuildingModelInitialization) {
-    EXPECT_EQ(test_building->GetStoreys().size(), 0) << "New building should have zero storeys";
+    EXPECT_EQ(test_building->NumberOfStories(), 0) << "New building should have zero storeys";
 }
 
 // Test: Storey addition to building model
@@ -83,8 +74,8 @@ TEST_F(ExodusIFCUtilsTest, StoreyAddition) {
     
     test_building->AddStorey(storey);
     
-    EXPECT_EQ(test_building->GetStoreys().size(), 1) << "Should have one storey after addition";
-    EXPECT_EQ(test_building->GetStoreys()[0]->GetName(), "First Floor") << "Storey name should be set correctly";
+    EXPECT_EQ(test_building->NumberOfStories(), 1) << "Should have one storey after addition";
+    EXPECT_EQ(test_building->GetStorey(0)->GetName(), "First Floor") << "Storey name should be set correctly";
 }
 
 // Test: Multiple storeys addition
@@ -96,10 +87,10 @@ TEST_F(ExodusIFCUtilsTest, MultipleStoreysAddition) {
         test_building->AddStorey(storey);
     }
     
-    EXPECT_EQ(test_building->GetStoreys().size(), 5) << "Should have 5 storeys";
+    EXPECT_EQ(test_building->NumberOfStories(), 5) << "Should have 5 storeys";
     
-    for (size_t i = 0; i < test_building->GetStoreys().size(); ++i) {
-        EXPECT_NEAR(test_building->GetStoreys()[i]->GetElevationOfFFLRelative(), 
+    for (size_t i = 0; i < test_building->NumberOfStories(); ++i) {
+        EXPECT_NEAR(test_building->GetStorey(i)->GetElevationOfFFLRelative(), 
                     static_cast<float>(i * 3.5f), 0.001f) 
                     << "Storey elevation should be correctly set";
     }
@@ -148,9 +139,9 @@ TEST_F(ExodusIFCUtilsTest, PointRepresentation) {
     IFCPoint p1(1.0f, 2.0f, 3.0f);
     IFCPoint p2(4.0f, 5.0f, 6.0f);
     
-    EXPECT_FLOAT_EQ(p1.X(), 1.0f) << "Point X coordinate should match";
-    EXPECT_FLOAT_EQ(p1.Y(), 2.0f) << "Point Y coordinate should match";
-    EXPECT_FLOAT_EQ(p1.Z(), 3.0f) << "Point Z coordinate should match";
+    EXPECT_DOUBLE_EQ(p1.Get(0), 1.0) << "Point X coordinate should match";
+    EXPECT_DOUBLE_EQ(p1.Get(1), 2.0) << "Point Y coordinate should match";
+    EXPECT_DOUBLE_EQ(p1.Get(2), 3.0) << "Point Z coordinate should match";
 }
 
 // Test: Base data attributes

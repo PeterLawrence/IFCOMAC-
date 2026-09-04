@@ -5,6 +5,18 @@
 #include <tuple>
 #include <limits>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef IFCSPACIALIMPORT_API
+#if defined(_WIN32)
+#if defined(IFCSPACIALIMPORT_EXPORTS)
+#define IFCSPACIALIMPORT_API __declspec(dllexport)
+#else
+#define IFCSPACIALIMPORT_API __declspec(dllimport)
+#endif
+#else
+#define IFCSPACIALIMPORT_API
+#endif
+#endif
+
 class IFCSpaceModel;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class IFCPoint
@@ -1036,7 +1048,7 @@ public:
     void SetMinCoordinate(IFCPoint aVal) { m_MinCoordinate = aVal; }
     void SetMaxCoordinate(IFCPoint aVal) { m_MaxCoordinate = aVal; }
 
-    bool UpdateAssociations();
+    IFCSPACIALIMPORT_API bool UpdateAssociations();
 
     bool GeometryRequired(std::string &guid) const;
     std::shared_ptr<IFCStoreyModel> GetStorey(std::shared_ptr<IFCRepresentation> anObject) const;

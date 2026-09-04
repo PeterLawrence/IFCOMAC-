@@ -77,21 +77,41 @@ build.bat Release
 
 See `apps/README.md` for detailed usage examples and integration patterns.
 
-### Building Unit Tests
+### Building and Running Unit Tests
 
-To build and run the unit tests suite (requires Google Test):
+The project includes 10 Google Test cases in
+`tests\test_exodus_ifc_utils.cpp`. They cover:
 
-```
+- IFC extraction from valid and invalid files
+- Building model initialization and storey management
+- Door properties and space creation
+- Building association updates
+- 3D point coordinates
+- Common name and long-name attributes
+
+Google Test is downloaded automatically by CMake when tests are enabled. From
+the repository root, configure the test target and build it:
+
+```powershell
 cmake -S . -B build -G "Visual Studio 15 2017" -A x64 -DBUILD_TESTS=ON
 cmake --build build --config Release --target IfcSpacialImportTests
 ```
 
-Run tests with:
-```
-cd build && ctest -C Release --output-on-failure
+Run the tests with CTest:
+
+```powershell
+ctest --test-dir build -C Release --output-on-failure
 ```
 
-See `tests/README.md` for detailed testing documentation.
+The test executable can also be run directly:
+
+```powershell
+.\build\bin\Release\IfcSpacialImportTests.exe
+```
+
+The valid-file extraction test looks for `tests\test_data\sample.ifc`. If this
+file is not present, that test is skipped; the remaining tests can still run.
+See `tests\README.md` for the complete test list and test-data details.
 
 ### Building All Targets (DLL, Tests, and Apps)
 

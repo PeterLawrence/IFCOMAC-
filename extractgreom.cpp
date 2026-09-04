@@ -12,6 +12,8 @@
 #include "exodusifcutils.h"
 #include "getpset.h"
 #include <Windows.h>
+#include <fstream>
+#include <stdexcept>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int ExodusIFCGeomUtils::TestExtractGeom(IfcParse::IfcFile& file, ifcopenshell::geometry::Settings& settings)
 {
@@ -1146,3 +1148,24 @@ bool ExodusIFCGeomUtils::EXODUSIFCExtract(IfcParse::IfcFile &file, IFCBuildingMo
     return true;
 }
 
+bool ExodusIFCGeomUtils::EXODUSIFCExtract(const char* filename, IFCBuildingModel &MyBuilding)
+{
+    if (filename == nullptr || *filename == '\0')
+    {
+        throw std::invalid_argument("IFC filename must not be empty");
+    }
+
+    std::ifstream input(filename, std::ios::binary);
+    if (!input.good())
+    {
+        throw std::invalid_argument("Unable to open IFC file: " + std::string(filename));
+    }
+
+    IfcParse::IfcFile file(filename);
+    if (!file.good())
+    {
+        throw std::runtime_error("Unable to parse IFC file: " + std::string(filename));
+    }
+
+    return EXODUSIFCExtract(file, MyBuilding);
+}

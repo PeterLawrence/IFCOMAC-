@@ -390,6 +390,8 @@ if(BUILD_TESTS)
     # Link test executable with main library and Google Test
     target_link_libraries(IfcSpacialImportTests PRIVATE
         IfcSpacialImport
+        "$<$<CONFIG:Debug>:${IFCOPENSHELL_BUILD}/Debug/IfcParse.lib>"
+        "$<$<CONFIG:Release>:${IFCOPENSHELL_BUILD}/Release/IfcParse.lib>"
         gtest
         gtest_main
     )
@@ -398,12 +400,18 @@ if(BUILD_TESTS)
     target_include_directories(IfcSpacialImportTests PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}"
         "${IFCOPENSHELL_SRC}"
+        "${IFCOPENSHELL_DEPS}/boost_1_79_0"
+    )
+
+    set_target_properties(IfcSpacialImportTests PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>"
     )
     
     # Add test to CTest
     add_test(
         NAME IfcSpacialImportTests
         COMMAND IfcSpacialImportTests
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$<CONFIG>"
     )
     
     message(STATUS "Tests enabled. Build with: cmake --build . --config Release --target IfcSpacialImportTests")
